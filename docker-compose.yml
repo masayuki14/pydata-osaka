@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:8.0
+    command:
+      - --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 13306:3306
+    working_dir: /work
+    volumes:
+      - ./db/mysql/datadir:/var/lib/mysql
+      - ./db:/work
+      - ./db/init.d:/docker-entrypoint-initdb.d
+
+  jupyter:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.jupyter
+    depends_on:
+      - db
+    volumes:
+      - ./jupyter-workspace:/home/jovyan/work
+    ports:
+      - 18888:8888
+
+  dash:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.dash
+    command: ["python", "/work/dash/app.py"]
+    working_dir: /work
+    depends_on:
+      - db
+    volumes:
+      - ./:/work
+    ports:
+      - 18050:8050
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 18080:8080
+

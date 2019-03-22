@@ -1,0 +1,25 @@
+# vim: set filetype=Dockerfile:
+FROM python:3.7
+
+RUN apt-get update
+RUN apt-get -y install vim
+
+RUN mkdir /work
+WORKDIR /work
+
+RUN pip install --upgrade pip
+
+RUN pip install pandas
+RUN pip install -U scikit-learn
+
+# for dash
+RUN pip install dash==0.36.0
+RUN pip install dash-html-components==0.13.5
+RUN pip install dash-core-components==0.43.0
+RUN pip install dash-table==3.1.11
+RUN pip install dash-daq==0.1.0
+
+RUN export LANG=ja_JP.UTF-8
+
+RUN pip install mysql-connector-python==8.0.15
+
